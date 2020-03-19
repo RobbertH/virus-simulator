@@ -1,5 +1,5 @@
 // Globals
-var nbHealthy = 1000;
+var nbHealthy = 500;
 var nbSick = 1;
 var nbFramesImmunity = 200; // nb of frames required to recover and be immune
 var colors = ['blue', 'red', 'orange', '#FFCD32', '#CDDC28', '#2ABABF', ];
@@ -8,11 +8,19 @@ var dots = [];
 var speed = 5;
 
 // Plot information
-nbFrames = 0;
-nbImmune = 0;
+var nbFrames = 0;
+var nbImmune = 0;
+// traces
+var plotData = 	[
+			{x: [], y: [], stackgroup: 'one', groupnorm:'percent'},
+			{x: [], y: [], stackgroup: 'one'},
+			{x: [], y: [], stackgroup: 'one'}];
 
 $(document).ready(main) // wait for document to be ready
 function main() {
+
+	plot_create();
+
 	var canvas = $('canvas.dots');
 	var context = canvas[0].getContext('2d');
 	var canvasWidth = canvas.width();
@@ -92,24 +100,23 @@ function main() {
 			}
 		}
 
-		// draw background
-		context.fillStyle = "black";
-		context.globalAlpha = 0.5; // transparent
-		context.fillRect(0, 0, 0.3*canvasWidth, 0.1*canvasHeight);
-		context.globalAlpha = 1;
-		// draw text
-		text = "frames = " + nbFrames + " nbHealthy = " + nbHealthy + "  nbSick = " + nbSick + "  nbImmune = " + nbImmune;
-		context.font = "bold 14px verdana, sans-serif ";
-		context.fillStyle = "white";
-		context.fillText(text, 10, 20); 
 		// draw graph
 		drawGraph();
-		
+
 		window.requestAnimationFrame(moveDots);
 	}
 
 	function drawGraph() {
-		
+		// x-axis
+		plotData[0].x.push(nbFrames);
+		plotData[1].x.push(nbFrames);
+		plotData[2].x.push(nbFrames);
+		// y-axis
+		plotData[0].y.push(nbSick);
+		plotData[1].y.push(nbHealthy);
+		plotData[2].y.push(nbImmune);
+		// redraw
+		plot_update();	
 	}
 
 	function collide(dot1, dot2) {
@@ -179,5 +186,25 @@ function main() {
 		return (distance(dot1, dot2) <= dot1.radius + dot2.radius)
 	}
 
+	function plot_create() {
+		var plotDiv = document.getElementById('plot');
+		var traces = [
+			{x: [], y: [], stackgroup: 'one', groupnorm:'percent'},
+			{x: [], y: [], stackgroup: 'one'},
+			{x: [], y: [], stackgroup: 'one'}
+		];
+
+		Plotly.react('plot', plotData, {title: 'Evolution over time'});
+	}
+
+	function plot_update() {
+		if (nbFrames % 1 == 0) {
+			var plotDiv = document.getElementById('plot');
+			console.log("redrew");
+			var plot_title = "frames = " + nbFrames + "  nbHealthy = " + nbHealthy + "  nbSick = " + nbSick + "  nbImmune = " + nbImmune;
+			Plotly.react('plot', plotData, {title: plot_title, datarevision: nbFrames});
+		}
+	}
 }
+
 

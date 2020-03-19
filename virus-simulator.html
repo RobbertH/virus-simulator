@@ -10,11 +10,20 @@
 			integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
 			crossorigin="anonymous"></script>
 
+		<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+
 		<script src="virus-simulator.js" charset="utf-8"></script>	
 		<link rel="stylesheet" href="style.css" type="text/css" media="all">
 
 	</head>
 	<body>
-		<canvas id="canvas" class="dots">Your browser does not support canvas.</canvas>	
+		<div class="main-flex">
+			<div class='upper'>
+				<div id='plot'><!-- Plotly chart will be drawn inside this DIV --></div>
+			</div>
+			<div class='lower'>
+				<canvas id="canvas" class="dots">Your browser does not support canvas.</canvas>	
+			</div>
+		</div>
 	</body>
 </html>
