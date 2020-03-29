@@ -1,6 +1,6 @@
 // Globals
 var nbHealthy = 500;
-var nbSick = 1;
+var nbSick = 10;
 var nbFramesImmunity = 200; // nb of frames required to recover and be immune
 var colors = ['blue', 'red', 'orange', '#FFCD32', '#CDDC28', '#2ABABF', ];
 var dotRadius = 5;
@@ -61,8 +61,20 @@ function main() {
 			nbSickDays: 0
 		};
 		// Save it to the dots array.
-		dots.push(dot);
-		drawDot(dot);
+		var goodDot = true;
+		for (var i = 0; i < dots.length; i++) {
+			if (collides(dot, dots[i])) {
+				goodDot = false;
+				break;
+			}	
+		}
+		if (goodDot) {
+			dots.push(dot);
+			drawDot(dot);
+		}
+		else {
+			newRandomDot(sickness);
+		}
 	}
 
 	setTimeout(function(){
