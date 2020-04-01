@@ -39,10 +39,6 @@ function main() {
 	function newRandomDot(sickness) {
 		var x = Math.random() * canvasWidth;
 		var y = Math.random() * canvasHeight;
-		var color = colors[0];
-		if (sickness == "sick") {
-			color = colors[1];
-		}
 		var xDirection = Math.floor(Math.random()*2)*2-1 // 1 or -1
 		var yDirection = Math.floor(Math.random()*2)*2-1 // 1 or -1
 		var xSpeed = Math.random() * speed;
@@ -54,7 +50,6 @@ function main() {
 			radius: dotRadius,
 			xDirection: xDirection,
 			yDirection: yDirection,
-			color: color,
 			xSpeed: xSpeed,
 			ySpeed: ySpeed,
 			sickness: sickness,
@@ -178,12 +173,10 @@ function main() {
 			nbSick += 1;
 		}
 		dot.sickness = "sick";
-		dot.color = colors[1];
 	}
 
 	function setImmune(dot) {
 		dot.sickness = "immune";
-		dot.color = colors[2];
 		nbImmune += 1;
 		nbSick -= 1;
 	}
@@ -199,8 +192,21 @@ function main() {
 		context.globalAlpha = 0.99;
 		context.beginPath();
 		context.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI, false);
-		context.fillStyle = dot.color;
+		context.fillStyle = getColor(dot);
 		context.fill();
+	}
+
+	function getColor(dot) {
+		if (dot.sickness == "healthy") {
+			return colors[0];
+		}
+		if (dot.sickness == "sick") {
+			return colors[1];
+		}
+		if (dot.sickness == "immune") {
+			return colors[2];
+		}
+		console.error("Trying to get color of a dot of unknown state: '" + dot.sickness + "'");
 	}
 
 	function connectDots(dot1, dot2) {
