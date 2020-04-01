@@ -143,12 +143,33 @@ function main() {
 		dot2.yDirection = -dot2.yDirection;
 
 		// sickness adjustments
-		if (dot1.sickness == "sick" || dot2.sickness == "sick") {
-			if (dot1.sickness != "immune" && dot2.sickness != "immune") {
-				setSick(dot1);
-				setSick(dot2);
-			}
+		if (isSick(dot1) || isSick(dot2)) {
+			infect(dot1);
+			infect(dot2);
 		}
+	}
+
+	function isSick(dot) {
+		return dot.sickness == "sick";
+	}
+
+	function infect(dot) {
+		if (dot.sickness == "immune") {
+			// can not infect immune dot
+			// TODO give it a chance to still get infected?
+			return;
+		}
+		if (dot.sickness == "sick") {
+			// already sick
+			// TODO give it a chance to reset nbSickDays?
+			return;
+		}
+		if (dot.sickness == "healthy") {
+			setSick(dot);
+			return;
+		}
+		// this should never be reached
+		console.error("Trying to infect dot of unknown state: '" + dot.sickness + "'");
 	}
 
 	function setSick(dot) {
