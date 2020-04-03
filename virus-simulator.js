@@ -91,6 +91,7 @@ function main() {
 			dots[i].y += (dots[i].yDirection * dots[i].ySpeed);
 
 			drawDot(dots[i])
+			updateHealthState(dots[i])
 
 			// Canvas boundaries
 			if ((dots[i].x + dots[i].radius) >= canvasWidth) {
@@ -181,13 +182,16 @@ function main() {
 		nbSick -= 1;
 	}
 
+	function updateHealthState(dot) {
+        if (dot.sickness == "sick") {
+            dot.nbSickDays += 1
+            if (dot.nbSickDays > nbFramesImmunity) {
+                setImmune(dot)
+            }
+        }
+	}
+
 	function drawDot(dot) {
-		if (dot.sickness == "sick") {
-			dot.nbSickDays += 1
-			if (dot.nbSickDays > nbFramesImmunity) {
-				setImmune(dot)
-			}
-		}
 		// Set transparency on the dots.
 		context.globalAlpha = 0.99;
 		context.beginPath();
