@@ -6,6 +6,8 @@ var colors = ['blue', 'red', 'orange', '#FFCD32', '#CDDC28', '#2ABABF', ];
 var dotRadius = 5;
 var dots = [];
 var speed = 5;
+var probabilityImmuneTransfer = 0.01;
+var probabilitySickTransfer = 0.60;
 
 // Plot information
 var nbFrames = 0;
@@ -139,33 +141,36 @@ function main() {
 		dot2.yDirection = -dot2.yDirection;
 
 		// sickness adjustments
-		if (isSick(dot1) || isSick(dot2)) {
-			infect(dot1);
-			infect(dot2);
-		}
+        infect(dot1, dot2);
+        infect(dot2, dot1);
+
 	}
 
 	function isSick(dot) {
 		return dot.sickness == "sick";
 	}
 
-	function infect(dot) {
-		if (dot.sickness == "immune") {
-			// can not infect immune dot
-			// TODO give it a chance to still get infected?
-			return;
-		}
-		if (dot.sickness == "sick") {
-			// already sick
-			// TODO give it a chance to reset nbSickDays?
-			return;
-		}
-		if (dot.sickness == "healthy") {
-			setSick(dot);
-			return;
-		}
+	function infect(sender, receiver) {
+	    if (receiver.sickness == "sick" || receiver.sickness == "immune" || sender.sickness == "healthy") {
+	        return;
+	    }
+	    if (receiver.sickness != "healthy") {
+	        console.error("Receiver should only be able to be healthy at this point, was: '" + receiver.sickness + "'");
+	    }
+	    if (sender.sickness == "sick") {
+            if (Math.random() < probabilitySickTransfer) {
+                setSick(receiver);
+                return;
+            }
+	    }
+	    if (sender.sickness == "immune") {
+            if (Math.random() < probabilityImmuneTransfer) {
+                setSick(receiver);
+                return;
+            }
+        }
 		// this should never be reached
-		console.error("Trying to infect dot of unknown state: '" + dot.sickness + "'");
+		console.error("Trying to infect dot of unknown state: '" + sender.sickness + "' to '" + receiver.sickness + '"');
 	}
 
 	function setSick(dot) {
